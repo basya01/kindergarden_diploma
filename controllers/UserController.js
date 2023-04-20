@@ -5,9 +5,6 @@ import UserService from '../services/UserService.js';
 import { mailer } from '../nodemailer.js';
 import { generateEmailVerificationCode } from '../utils/index.js';
 import twilio from 'twilio';
-const accountSid = 'ACe55a785866e399f0acad40f28fcafd57';
-const authToken = '69a6aef83dd9a6a3d09e800b9b291c52';
-const client = new twilio(accountSid, authToken);
 
 class UserController {
   async register(req, res) {
@@ -139,6 +136,10 @@ class UserController {
   }
 
   async sendCodeToPhone(req, res) {
+    const accountSid = 'ACe55a785866e399f0acad40f28fcafd57';
+    const authToken = '69a6aef83dd9a6a3d09e800b9b291c52';
+    const client = new twilio(accountSid, authToken);
+
     const verificationCode = generateEmailVerificationCode();
     const message = `Код подтверждения: ${verificationCode}`;
     const user = await UserModel.unscoped().findByPk(req.userId);
