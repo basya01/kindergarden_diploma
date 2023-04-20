@@ -11,9 +11,10 @@ const lastName = body('lastName')
   .withMessage('Lastname should contain only letters from 2 to twenty');
 const age = body('age').isInt().withMessage('Age must be integer');
 const photo = body('photo').isURL().withMessage('Photo must be URL');
+const email = body('email').isEmail().withMessage('It is not similar to email');
 
 export const registerValidator = [
-  body('email').isEmail().withMessage('It is not similar to email'),
+  email,
   body('phoneNumber')
     .isMobilePhone()
     .withMessage('It is not similar to phone number'),
@@ -35,7 +36,7 @@ export const registerValidator = [
 ];
 
 export const loginValidator = [
-  body('email').optional().isEmail().withMessage('It is not similar to email'),
+  email.optional(),
   body('phoneNumber')
     .optional()
     .isMobilePhone()
@@ -62,3 +63,5 @@ export const createChildValidator = [
   body('photo').isURL().withMessage('Photo must be url').optional(),
   photo.optional(),
 ];
+
+export const createSubscriberValidator = [email];

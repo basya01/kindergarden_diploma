@@ -35,11 +35,35 @@ export default (sequelize) => {
       status: {
         type: DataTypes.STRING(10),
       },
+      emailVerificationCode: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      phoneVerificationCode: {
+        type: DataTypes.INTEGER,
+      },
+      isVerifedEmail: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isVerifedPhone: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
+      getters: {
+        isFullVerified() {
+          return this.isVerifedEmail && this.isVerifedPhone;
+        },
+      },
       defaultScope: {
         attributes: {
-          exclude: ['passwordHash'],
+          exclude: [
+            'passwordHash',
+            'emailVerificationCode',
+            'phoneVerificationCode',
+          ],
         },
       },
     }

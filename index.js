@@ -7,6 +7,7 @@ import {
   userRouter,
   bookRouter,
   authRouter,
+  subscriberRouter,
 } from './routes/index.js';
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use('/user', userRouter);
 app.use('/child', childRouter);
 app.use('/book', bookRouter);
 app.use('/auth', authRouter);
+app.use('/subscriber', subscriberRouter);
 app.use('/uploads', express.static('uploads'));
 
 const storage = diskStorage({

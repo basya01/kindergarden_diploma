@@ -2,6 +2,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserModel } from '../db/index.js';
 import UserService from '../services/UserService.js';
+import { mailer } from '../nodemailer.js';
+import { generateEmailVerificationCode } from '../utils/index.js';
+import twilio from 'twilio';
+const accountSid = 'ACe55a785866e399f0acad40f28fcafd57';
+const authToken = '69a6aef83dd9a6a3d09e800b9b291c52';
+const client = new twilio(accountSid, authToken);
 
 class UserController {
   async register(req, res) {
@@ -19,18 +25,29 @@ class UserController {
 
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(password, saltRounds);
-
+      const emailVerificationCode = generateEmailVerificationCode();
+      const phoneVerificationCode = generateEmailVerificationCode();
       const user = await UserService.createUser({
         ...allExceptPass,
         passwordHash,
+        emailVerificationCode,
+        phoneVerificationCode,
       });
+
       const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
         expiresIn: '10d',
       });
 
+      const message = {
+        to: user.email,
+        subjetc: 'Реєстрація на єДніпро',
+        text: `${user.firstName}, дякую за реєстрацію! Ваш код підтверження ${emailVerificationCode}`,
+      };
+      mailer(message);
+
       return res.status(201).json({ ...user.dataValues, token });
     } catch (e) {
-      console.log(e.message);
+      console.log(e);
       return res.status(500).json({ message: 'User is not created' });
     }
   }
@@ -92,7 +109,7 @@ class UserController {
       }
       return res.json(user);
     } catch (e) {
-      res.status(500).json({ message: 'Users is not received' });
+      return res.status(500).json({ message: 'Users is not received' });
     }
   }
 
@@ -106,6 +123,50 @@ class UserController {
     } catch (error) {
       return res.status(500).json({ message: 'User is not recieved' });
     }
+  }
+
+  async verifyEmail(req, res) {
+    const user = await UserModel.unscoped().findByPk(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User does not exist' });
+    }
+    if (user.emailVerificationCode !== +req.params.code) {
+      return res.status(400).json({ message: 'Code is incorect' });
+    }
+    user.set({ isVerifedEmail: true });
+    await user.save();
+    return res.json(user);
+  }
+
+  async sendCodeToPhone(req, res) {
+    const verificationCode = generateEmailVerificationCode();
+    const message = `Код подтверждения: ${verificationCode}`;
+    const user = await UserModel.unscoped().findByPk(req.userId);
+    user.set({ phoneVerificationCode: verificationCode });
+    await user.save();
+    client.messages
+      .create({
+        body: message,
+        from: '+16202691186',
+        to: `${user.phoneNumber}`,
+      })
+      .then(() => {
+        res.status(200).json({ message: 'Code is sent' });
+      })
+      .catch((e) => {
+        console.log(e);
+        res.status(500).json({ message: 'Error, sms is not sent' });
+      });
+  }
+
+  async verifyPhone(req, res) {
+    const user = await UserModel.unscoped().findByPk(req.userId);
+    if (user.phoneVerificationCode !== +req.params.code) {
+      return res.status(400).json({ message: 'Code is incorect' });
+    }
+    user.set({ isVerifedPhone: true });
+    await user.save();
+    return res.json(user);
   }
 }
 
