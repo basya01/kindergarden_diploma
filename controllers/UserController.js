@@ -19,28 +19,23 @@ class UserController {
       if (isUserExist) {
         return res.status(400).json({ message: 'Such a user already exists' });
       }
-
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(password, saltRounds);
-      const emailVerificationCode = generateEmailVerificationCode();
-      const phoneVerificationCode = generateEmailVerificationCode();
       const user = await UserService.createUser({
         ...allExceptPass,
         passwordHash,
-        emailVerificationCode,
-        phoneVerificationCode,
       });
 
       const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
         expiresIn: '10d',
       });
 
-      const message = {
-        to: user.email,
-        subjetc: 'Реєстрація на єДніпро',
-        text: `${user.firstName}, дякую за реєстрацію! Ваш код підтверження ${emailVerificationCode}`,
-      };
-      mailer(message);
+      // const message = {
+      //   to: user.email,
+      //   subjetc: 'Реєстрація на єДніпро',
+      //   text: `${user.firstName}, дякую за реєстрацію! Ваш код підтверження ${emailVerificationCode}`,
+      // };
+      // mailer(message);
 
       return res.status(201).json({ ...user.dataValues, token });
     } catch (e) {
@@ -122,6 +117,21 @@ class UserController {
     }
   }
 
+  async sendCodeToEmail(req, res) {
+    const verificationCode = generateEmailVerificationCode();
+    const user = await UserModel.unscoped().findByPk(req.userId);
+    user.set({ emailVerificationCode: verificationCode });
+    await user.save();
+    const message = {
+      to: user.email,
+      subjetc: 'Підтвердження електронної пошти на єДніпро',
+      text: `${user.firstName}, Ваш код підтверження: ${verificationCode}`,
+    };
+    mailer(message);
+
+    res.sendStatus(200);
+  }
+
   async verifyEmail(req, res) {
     const user = await UserModel.unscoped().findByPk(req.userId);
     if (!user) {
@@ -152,7 +162,7 @@ class UserController {
         to: `${user.phoneNumber}`,
       })
       .then(() => {
-        res.status(200).json({ message: 'Code is sent' });
+        res.sendStatus(200);
       })
       .catch((e) => {
         console.log(e);

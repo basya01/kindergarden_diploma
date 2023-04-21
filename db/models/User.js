@@ -37,7 +37,6 @@ export default (sequelize) => {
       },
       emailVerificationCode: {
         type: DataTypes.INTEGER,
-        allowNull: false,
       },
       phoneVerificationCode: {
         type: DataTypes.INTEGER,
