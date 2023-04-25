@@ -1,5 +1,12 @@
 import { Sequelize } from 'sequelize';
-import { User, Child, Book, ChildBook, Subscriber } from './models/index.js';
+import {
+  User,
+  Child,
+  Book,
+  ChildBook,
+  Subscriber,
+  Token,
+} from './models/index.js';
 import config from '../config/config.js';
 
 const sequelize = new Sequelize(
@@ -13,7 +20,7 @@ const sequelize = new Sequelize(
 );
 
 (async () => {
-  await sequelize.sync({ alter: true });
+  await sequelize.sync();
 })();
 
 export const UserModel = User(sequelize);
@@ -21,7 +28,9 @@ export const ChildModel = Child(sequelize);
 export const BookModel = Book(sequelize);
 export const ChildBookModel = ChildBook(sequelize);
 export const SubscriberModel = Subscriber(sequelize);
+export const TokenModel = Token(sequelize);
 
+UserModel.hasOne(TokenModel, { foreignKey: 'userId' });
 UserModel.hasMany(ChildModel, { foreignKey: 'parentId' });
 ChildModel.belongsToMany(BookModel, { through: ChildBookModel });
 BookModel.belongsToMany(ChildModel, {

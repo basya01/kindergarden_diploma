@@ -1,26 +1,28 @@
 import dotenv from 'dotenv';
 import express, { json } from 'express';
+import cookies from 'cookie-parser';
 import multer, { diskStorage } from 'multer';
 import path from 'path';
+import { errorHandler } from './middlewares/index.js';
 import {
-  childRouter,
-  userRouter,
   bookRouter,
-  authRouter,
+  childRouter,
   subscriberRouter,
+  userRouter,
 } from './routes/index.js';
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.use(json());
+app.use(cookies());
 app.use('/user', userRouter);
 app.use('/child', childRouter);
 app.use('/book', bookRouter);
-app.use('/auth', authRouter);
 app.use('/subscriber', subscriberRouter);
 app.use('/uploads', express.static('uploads'));
+app.use(errorHandler);
 
 const storage = diskStorage({
   destination: (req, file, cb) => {
@@ -33,7 +35,7 @@ const storage = diskStorage({
 
 const upload = multer({ storage });
 app.post('/upload', upload.single(), (req, res) => {
-  res.json({ url: `uploads/${req.file.originalname}` });
+  res.json({ url: `uploads/${req.file.filename}` });
 });
 
 app.listen(port, () => {

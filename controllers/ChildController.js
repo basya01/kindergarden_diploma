@@ -10,7 +10,7 @@ class ChildController {
     return res.status(201).json(child);
   }
 
-  async addBook(req, res) {
+  async addBook(req, res, next) {
     try {
       const { childId, bookId } = req.body;
       const child = await ChildModel.findByPk(childId, { include: BookModel });
@@ -22,11 +22,11 @@ class ChildController {
       await child.addBook(book);
       return res.status(201).json(book);
     } catch (e) {
-      return res.status(500).json({ message: 'Book is not added' });
+      return next(e);
     }
   }
 
-  async updateChildBook(req, res) {
+  async updateChildBook(req, res, next) {
     try {
       const { childId, bookId, progress } = req.body;
       const book = await ChildBookModel.findOne({
@@ -39,8 +39,7 @@ class ChildController {
       await book.save();
       return res.json(book);
     } catch (e) {
-      console.log(e.message);
-      return res.status(500).json('Book is not updated');
+      return next(e);
     }
   }
 }

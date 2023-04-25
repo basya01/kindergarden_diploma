@@ -1,16 +1,16 @@
 import { BookModel, ChildModel } from '../db/index.js';
 
 class BookController {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
       const books = await BookModel.findAll();
       return res.status(200).json(books);
     } catch (e) {
-      return res.status(500).json({ message: 'Books are not received' });
+      return next(e);
     }
   }
 
-  async getOne(req, res) {
+  async getOne(req, res, next) {
     try {
       const book = await BookModel.findByPk(req.params.id, {
         include: ChildModel,
@@ -20,7 +20,7 @@ class BookController {
       }
       return res.json(book);
     } catch (e) {
-      return res.status(500).json({ message: 'Book is not recieved' });
+      return next(e);
     }
   }
 }

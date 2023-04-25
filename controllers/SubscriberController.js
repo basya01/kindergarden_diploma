@@ -1,7 +1,8 @@
 import { SubscriberModel } from '../db/index.js';
+import ApiError from '../exceptions/apiErrors.js';
 
 class SubscriberController {
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       const subscriber = await SubscriberModel.create({
         email: req.body.email,
@@ -9,9 +10,9 @@ class SubscriberController {
       return res.json(subscriber);
     } catch (e) {
       if (e.original.errno === 1062) {
-        return res.status(400).json({ message: 'Subscriber already exists' });
+        next(ApiError.BadRequest('Subscriber already exists'));
       }
-      return res.status(500).json({ message: 'Subscriber is not created' });
+      return next(e);
     }
   }
 }

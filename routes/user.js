@@ -29,6 +29,8 @@ router.post(
   checkValidationResults,
   UserController.login
 );
+router.post('/logout', UserController.logout);
+router.post('/refresh', UserController.refresh);
 router.post('/verify-email/send', checkAuth, UserController.sendCodeToEmail);
 router.post('/verify-email/:code', checkAuth, UserController.verifyEmail);
 router.post('/verify-phone/send', checkAuth, UserController.sendCodeToPhone);

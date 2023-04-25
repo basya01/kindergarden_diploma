@@ -1,25 +1,19 @@
 import { body } from 'express-validator';
 
-const firstName = body('firstName')
-  .isString()
-  .isLength({ min: 2, max: 12 })
-  .isAlpha()
-  .withMessage('Firstname should contain only letters from 2 to 12');
-const lastName = body('lastName')
-  .isString()
-  .isLength({ min: 2, max: 20 })
-  .withMessage('Lastname should contain only letters from 2 to twenty');
-const age = body('age').isInt().withMessage('Age must be integer');
-const photo = body('photo').isURL().withMessage('Photo must be URL');
-const email = body('email').isEmail().withMessage('It is not similar to email');
-
 export const registerValidator = [
-  email,
+  body('email').isEmail().withMessage('It is not similar to email'),
   body('phoneNumber')
     .isMobilePhone()
     .withMessage('It is not similar to phone number'),
-  firstName,
-  lastName,
+  body('firstName')
+    .isString()
+    .isLength({ min: 2, max: 12 })
+    .isAlpha()
+    .withMessage('Firstname should contain only letters from 2 to 12'),
+  body('lastName')
+    .isString()
+    .isLength({ min: 2, max: 20 })
+    .withMessage('Lastname should contain only letters from 2 to twenty'),
   body('password')
     .isStrongPassword({
       minLength: 8,
@@ -32,11 +26,11 @@ export const registerValidator = [
     .withMessage(
       'Password should have at least 8 characters, 1 lowercase, 1 uppercase, 1 number and 1 symbol'
     ),
-  photo.optional(),
+  body('photo').optional().isURL().withMessage('Photo must be URL'),
 ];
 
 export const loginValidator = [
-  email.optional(),
+  body('email').optional().isEmail().withMessage('It is not similar to email'),
   body('phoneNumber')
     .optional()
     .isMobilePhone()
@@ -45,23 +39,42 @@ export const loginValidator = [
 ];
 
 export const userUpdateValidator = [
-  firstName.optional(),
-  lastName.optional(),
-  age.optional(),
+  body('id').isInt().withMessage('Id must be integer'),
+  body('firstName')
+    .optional()
+    .isString()
+    .isLength({ min: 2, max: 12 })
+    .isAlpha()
+    .withMessage('Firstname should contain only letters from 2 to 12'),
+  body('lastName')
+    .optional()
+    .isString()
+    .isLength({ min: 2, max: 20 })
+    .withMessage('Lastname should contain only letters from 2 to twenty'),
+  body('age').optional().isInt().withMessage('Age must be integer'),
   body('status')
     .isString()
     .isLength({ min: 2, max: 20 })
     .withMessage('Lastname should contain only letters from 2 to twenty')
     .optional(),
-  photo.optional(),
+  body('photo').optional().isURL().withMessage('Photo must be URL'),
 ];
 
 export const createChildValidator = [
-  firstName,
-  lastName,
-  age.optional(),
+  body('firstName')
+    .isString()
+    .isLength({ min: 2, max: 12 })
+    .isAlpha()
+    .withMessage('Firstname should contain only letters from 2 to 12'),
+  body('lastName')
+    .isString()
+    .isLength({ min: 2, max: 20 })
+    .withMessage('Lastname should contain only letters from 2 to twenty'),
+  body('age').optional().isInt().withMessage('Age must be integer'),
   body('photo').isURL().withMessage('Photo must be url').optional(),
-  photo.optional(),
+  body('photo').optional().isURL().withMessage('Photo must be URL'),
 ];
 
-export const createSubscriberValidator = [email];
+export const createSubscriberValidator = [
+  body('email').isEmail().withMessage('It is not similar to email'),
+];

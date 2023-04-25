@@ -2,7 +2,7 @@ export default {
   development: {
     username: 'root',
     password: 'root',
-    database: 'mydatabase',
+    database: 'database',
     host: 'localhost',
     dialect: 'mysql',
   },

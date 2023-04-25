@@ -1,3 +1,4 @@
+import ApiError from '../exceptions/apiErrors.js';
 import { UserService } from '../services/index.js';
 
 export const checkChildBelongsUser = async (req, res, next) => {
@@ -5,12 +6,14 @@ export const checkChildBelongsUser = async (req, res, next) => {
     const userId = req.userId;
     const childId = req.body.childId;
     const user = await UserService.getUserByPk(userId);
-    const isChildBelongsUser = user.Children.some((child) => child.id === childId);
+    const isChildBelongsUser = user.Children.some(
+      (child) => child.id === childId
+    );
     if (!isChildBelongsUser) {
-      return res.status(403).json({ message: 'No access' });
+      return next(ApiError.Forbidden('No access'));
     }
-    next();
+    return next();
   } catch (e) {
-    res.status(500).json({ message: 'User verification failed' });
+    return next(e);
   }
 };
