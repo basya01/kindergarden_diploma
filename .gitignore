@@ -12,7 +12,7 @@
 *.sqlite
 
 # Environment variables
-.env
+# .env
 .env.local
 .env.*.local
 .env.*.prod
