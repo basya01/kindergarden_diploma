@@ -6,7 +6,7 @@ export default {
     host: 'localhost',
     dialect: 'mysql',
   },
-  test: {
+  test: { 
     username: 'root',
     password: null,
     database: 'database_test',

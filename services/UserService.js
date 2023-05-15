@@ -11,6 +11,12 @@ class UserService {
     });
     return user;
   }
+  async findByEmail(email) {
+    const user = await UserModel.unscoped().findOne({
+      where: { email },
+    });
+    return user;
+  }
 
   async findByEmailOrPhoneUnscoped(email, phoneNumber) {
     const inputValue = email || phoneNumber;

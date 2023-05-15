@@ -12,10 +12,7 @@ class UserController {
     const { password, ...allExceptPass } = req.body;
     try {
       const isUserExist = Boolean(
-        await UserService.findByEmailOrPhone(
-          allExceptPass.email,
-          allExceptPass.phoneNumber
-        )
+        await UserService.findByEmail(allExceptPass.email)
       );
       if (isUserExist) {
         return next(ApiError.BadRequest('Such a user is already exist'));
@@ -32,7 +29,9 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      return res.status(201).json({ ...user.dataValues, ...tokens });
+      return res
+        .status(201)
+        .json({ ...user.dataValues, token: tokens.accessToken });
     } catch (e) {
       return next(e);
     }
@@ -40,14 +39,12 @@ class UserController {
 
   async login(req, res, next) {
     try {
-      const { email, password, phoneNumber } = req.body;
-      const user = await UserService.findByEmailOrPhoneUnscoped(
-        email,
-        phoneNumber
-      );
+      const { email, password } = req.body;
+      const user = await UserService.findByEmail(email);
       if (!user) {
         return next(ApiError.NotFound('Such a user does not exist'));
       }
+      console.log(user.dataValues);
       const isPassMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isPassMatch) {
         return next(
@@ -60,7 +57,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      return res.json({ ...user.dataValues, tokens });
+      return res.json({ ...user.dataValues, token: tokens.accessToken });
     } catch (e) {
       return next(e);
     }

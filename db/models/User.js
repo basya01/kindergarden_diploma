@@ -11,11 +11,6 @@ export default (sequelize) => {
         type: DataTypes.STRING(20),
         allowNull: false,
       },
-      phoneNumber: {
-        type: DataTypes.STRING(13),
-        allowNull: false,
-        unique: true,
-      },
       email: {
         type: DataTypes.STRING(319),
         allowNull: false,

@@ -2,9 +2,6 @@ import { body } from 'express-validator';
 
 export const registerValidator = [
   body('email').isEmail().withMessage('It is not similar to email'),
-  body('phoneNumber')
-    .isMobilePhone()
-    .withMessage('It is not similar to phone number'),
   body('firstName')
     .isString()
     .isLength({ min: 2, max: 12 })
@@ -30,11 +27,7 @@ export const registerValidator = [
 ];
 
 export const loginValidator = [
-  body('email').optional().isEmail().withMessage('It is not similar to email'),
-  body('phoneNumber')
-    .optional()
-    .isMobilePhone()
-    .withMessage('It is not similar to phone number'),
+  body('email').isEmail().withMessage('It is not similar to email'),
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
