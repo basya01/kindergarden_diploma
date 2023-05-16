@@ -2,12 +2,16 @@ import { Op } from 'sequelize';
 import { BookModel, ChildModel, ChildBookModel } from '../db/index.js';
 
 class ChildController {
-  async create(req, res) {
-    const child = await ChildModel.create({
-      ...req.body,
-      parentId: req.userId,
-    });
-    return res.status(201).json(child);
+  async create(req, res, next) {
+    try {
+      const child = await ChildModel.create({
+        ...req.body,
+        parentId: req.userId,
+      });
+      return res.status(201).json(child);
+    } catch (e) {
+      return next(e);
+    }
   }
 
   async addBook(req, res, next) {

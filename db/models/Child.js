@@ -12,6 +12,7 @@ export default (sequelize) => {
     },
     age: {
       type: DataTypes.INTEGER,
+      allowNull: false,
     },
     photo: {
       type: DataTypes.STRING,
