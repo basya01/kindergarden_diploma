@@ -5,7 +5,7 @@ export const registerValidator = [
   body("firstName")
     .isString()
     .isLength({ min: 2, max: 20 })
-    .isAlpha()
+    .isAlpha('uk-UA')
     .withMessage("Ім'я має містити від 2 до 20 символів"),
   body("lastName")
     .isString()
