@@ -3,7 +3,9 @@ import express, { json } from 'express';
 import cookies from 'cookie-parser';
 import multer, { diskStorage } from 'multer';
 import path from 'path';
+import cors from 'cors';
 import { errorHandler } from './middlewares/index.js';
+
 import {
   bookRouter,
   childRouter,
@@ -12,11 +14,14 @@ import {
 } from './routes/index.js';
 
 dotenv.config();
+
 const app = express();
 const port = process.env.PORT || 3000;
 
+
 app.use(json());
 app.use(cookies());
+app.use(cors());
 app.use('/user', userRouter);
 app.use('/child', childRouter);
 app.use('/book', bookRouter);
