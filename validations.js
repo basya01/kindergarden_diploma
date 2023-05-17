@@ -20,7 +20,7 @@ export const registerValidator = [
       returnScore: false,
     })
     .withMessage('Пароль має містити від 4 символів'),
-  body('photo').optional().isURL().withMessage('Photo must be URL'),
+  // body('photo').optional().isURL().withMessage('Photo must be URL'),
 ];
 
 export const loginValidator = [
@@ -46,7 +46,7 @@ export const userUpdateValidator = [
     .isLength({ min: 2, max: 20 })
     .withMessage('Lastname should contain only letters from 2 to twenty')
     .optional(),
-  body('photo').optional().isURL().withMessage('Photo must be URL'),
+  // body('photo').optional().isURL().withMessage('Photo must be URL'),
 ];
 
 export const createChildValidator = [
@@ -59,7 +59,7 @@ export const createChildValidator = [
     .isLength({ min: 2, max: 20 })
     .withMessage('Lastname should contain only letters from 2 to twenty'),
   body('age').optional().isInt().withMessage('Age must be integer'),
-  body('photo').isURL().withMessage('Photo must be url').optional(),
+  // body('photo').isURL().withMessage('Photo must be url').optional(),
   body('sexId').isInt().withMessage('sexId must be integer(1 - man, 2 - woman)'),
 ];
 

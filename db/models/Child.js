@@ -16,9 +16,9 @@ export default (sequelize) => {
     },
     photo: {
       type: DataTypes.STRING,
-      validate: {
-        isUrl: true,
-      },
+      // validate: {
+      //   isUrl: true,
+      // },
     },
   });
 
